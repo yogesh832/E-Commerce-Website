@@ -12,13 +12,14 @@ import Orders from './Pages/Orders.jsx';
 import PlaceOrder from './Pages/PlaceOrder.jsx';
 import Product from './Pages/Product.jsx';
 import About from './Pages/About.jsx';
+import Footer from './Components/Footer.jsx';
 
 function App() {
   // npm install react-toastify for toast notifications
   return (
     <>
       <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]
-      py-1 '>
+      py-1 f'>
         <Navbar />
         <Routes>
           <Route path='/' element={<Home />} />
@@ -31,6 +32,7 @@ function App() {
           <Route path='/place-order' element={<PlaceOrder />} />
           <Route path='/orders' element={<Orders />} />
         </Routes>
+        <Footer />
       </div>
     </>
   );

@@ -1,10 +1,10 @@
-export default {
+module.exports = {
+  darkMode: 'class', // or 'media' if you want to use the system's dark mode preference
   content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    './src/**/*.{js,jsx,ts,tsx}', // Adjust this path based on your project structure
   ],
   theme: {
     extend: {},
   },
   plugins: [],
-}
+};
