@@ -1,9 +1,9 @@
 import React from 'react';
-import { assets } from '../assets/frontend_assets/assets';
-
+import newHero from '../assets/newHero.png'
 const Hero = () => {
   return (
-    <div className="flex  flex-col sm:flex-row border  border-gray-400">
+<>
+<div className="flex  flex-col sm:flex-row border  border-gray-400">
       {/* Hero left */}
       <div className="w-full sm:w-1/2  flex items-center justify-center py-10 sm:py-0">
         <div className="text-[#414141] text-center sm:text-left">
@@ -19,10 +19,12 @@ const Hero = () => {
         </div>
       </div>
       {/* Hero right */}
-      <div className="w-full sm:w-1/2 z-1  ">
-        <img src={assets.hero_img} alt="Latest Arrivals" className="" />
+      <div className="w-full z-1  ">
+        <img src={newHero} alt="Latest Arrivals" className="  sm:w-full" />
       </div>
     </div>
+  
+    </>
   );
 };
 

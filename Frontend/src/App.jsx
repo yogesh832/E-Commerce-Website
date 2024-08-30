@@ -13,14 +13,19 @@ import PlaceOrder from './Pages/PlaceOrder.jsx';
 import Product from './Pages/Product.jsx';
 import About from './Pages/About.jsx';
 import Footer from './Components/Footer.jsx';
-
+import SearchBar from './Components/SearchBar.jsx';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function App() {
   // npm install react-toastify for toast notifications
   return (
     <>
       <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]
       py-1 f'>
+        <ToastContainer />
+        
         <Navbar />
+        <SearchBar />
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/collection' element={<Collection />} />

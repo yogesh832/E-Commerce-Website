@@ -1,16 +1,87 @@
-import { createContext } from "react";
-import { products } from "../assets/frontend_assets/assets";
+import React, { createContext, useState, useMemo } from 'react';
+import { products } from '../assets/frontend_assets/assets'; // Adjust path as needed
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+
+
 
 export const ShopContext = createContext();
 
 const ShopContextProvider = (props) => {
-    const currency ="$";
+    const currency = "₹";
+    const delivery_fee = 10;
 
-    const delivery_fee = 10; 
+    const [search, setSearch] = useState('');
+    const [showSearch, setShowSearch] = useState(false);
+    const [cartItems, setCartItems] = useState({});
+const navigate = useNavigate();
+    const addToCart = async (itemId, size) => {
+        let cartData = structuredClone(cartItems);
 
-    const value = {
-       products, currency, delivery_fee
+        if (!size) {
+            toast.error("Please Select Size");
+            return;
+        }
+
+        if (cartData[itemId]) {
+            if (cartData[itemId][size]) {
+                cartData[itemId][size] += 1;
+            } else {
+                cartData[itemId][size] = 1;
+            }
+        } else {
+            cartData[itemId] = {};
+            cartData[itemId][size] = 1;
+        }
+        setCartItems(cartData);
     };
+
+    const getCartCount = () => {
+        let totalCount = 0;
+        for (const itemId in cartItems) {
+            for (const size in cartItems[itemId]) {
+                totalCount += cartItems[itemId][size];
+            }
+        }
+        return totalCount;
+    };
+
+
+    const updateQuantity= async (itemId, size, quantity) => {
+   let cartData  = structuredClone(cartItems);
+
+   cartData[itemId][size] = quantity;
+   setCartItems(cartData);
+    }
+
+
+    const getCartAmount = () => {
+        let totalAmount = 0;
+      
+        // Iterate through the items in the cart
+        for (const itemId in cartItems) {
+          // Iterate through the sizes within each item
+          for (const size in cartItems[itemId]) {
+            // Find the corresponding product
+            const product = products.find(product => product._id === itemId);
+            
+            if (product) {
+              // Add the total cost for this size and quantity to the total amount
+              totalAmount += product.price * cartItems[itemId][size];
+            }
+          }
+        }
+      
+        return totalAmount;
+      };
+
+
+    const value = useMemo(() => ({
+        products, currency, delivery_fee,
+        search, setSearch, showSearch, setShowSearch,
+        cartItems, addToCart, getCartCount, updateQuantity,getCartAmount
+        , navigate
+    }), [products, currency, delivery_fee, search, showSearch, cartItems]);
 
     return (
         <ShopContext.Provider value={value}>
@@ -20,23 +91,3 @@ const ShopContextProvider = (props) => {
 };
 
 export default ShopContextProvider;
-
-/* 
-1. Importing `createContext`:
-   - The `createContext` function from React is imported. This function is used to create a Context object, which allows you to share data across the component tree without passing props manually at every level.
-
-2. Creating a Context (`ShopContext`):
-   - The `ShopContext` is created using `createContext`. This Context object will hold the state or functions that need to be shared among components.
-
-3. Creating `ShopContextProvider` Component:
-   - A functional component called `ShopContextProvider` is created. This component will serve as the provider for the `ShopContext`, allowing child components to access the values stored in the Context.
-
-4. Defining the `value` Object:
-   - Inside the `ShopContextProvider`, an object named `value` is created. This object is intended to hold the state, functions, or other values that should be shared with components that consume the Context.
-
-5. Providing Context to Child Components:
-   - The `ShopContext.Provider` component is returned, wrapping around `props.children`. This makes the `value` object available to any child components nested inside `ShopContextProvider`.
-
-6. Exporting `ShopContextProvider`:
-   - Finally, the `ShopContextProvider` component is exported so it can be imported and used in other parts of the application. This allows other components to be wrapped with `ShopContextProvider` and gain access to the `ShopContext` values.
-*/
