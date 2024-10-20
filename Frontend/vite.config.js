@@ -5,5 +5,6 @@ export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
     include: ['web-vitals']
-  }
+  },
+  server:{port: 5174}
 });
