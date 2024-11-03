@@ -1,28 +1,38 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
-import { ShopContext } from '../Contaxt/ShopContext';
-import newLogo from '../assets/newLogo.png';
-import { assets } from '../assets/frontend_assets/assets';
+import React, { useContext, useState, useEffect } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom"; // Import useNavigate
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSun, faMoon } from "@fortawesome/free-solid-svg-icons";
+import { ShopContext } from "../Contaxt/ShopContext";
+import newLogo from "../assets/newLogo.png";
+import { assets } from "../assets/frontend_assets/assets";
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
   const [theme, setTheme] = useState(false);
-  const { setShowSearch, getCartCount } = useContext(ShopContext);
+  const [dropdownVisible, setDropdownVisible] = useState(false); // State for dropdown visibility
+  const { setShowSearch, getCartCount, setToken, setCartItems, token } =
+    useContext(ShopContext);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   // Toggle theme between light and dark mode
   const handleOnThemeToggle = () => {
-    setTheme(prevTheme => !prevTheme);
+    setTheme((prevTheme) => !prevTheme);
   };
 
   useEffect(() => {
     if (theme) {
-      document.documentElement.classList.add('dark');
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
   }, [theme]);
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setToken("");
+    setCartItems({});
+    navigate("/login"); // Use navigate to go to the login page
+  };
 
   return (
     <div className="flex items-center justify-between px-4 py-3 font-medium border-gray-200 dark:bg-gray-900 dark:text-white">
@@ -68,18 +78,34 @@ const Navbar = () => {
         </div>
 
         <div className="group relative">
-  <img className="w-5 cursor-pointer" src={assets.profile_icon} alt="" />
- <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
-    <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-black">
-    <Link to={'/Login'}><p className="cursor-pointer hover:text-black">My Profile</p></Link>  
-      <Link to={'/Orders'}><p  className="cursor-pointer hover:text-black">Orders</p>  </Link>
-      <p className="cursor-pointer hover:text-black">Logout</p>
-    </div>
-  </div>
+          <img
+            onClick={() => (token ? setDropdownVisible(!dropdownVisible) : navigate("/login"))} // Toggle the visibility of dropdown
+            className="w-5 cursor-pointer"
+            src={assets.profile_icon}
+            alt="Profile"
+          />
 
-</div>
+          {token && dropdownVisible && ( // Conditionally render dropdown based on dropdownVisible state
+            <div className="absolute dropdown-menu right-0 pt-4">
+              <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-black">
+                <Link to={"/Login"}>
+                  <p className="cursor-pointer hover:text-black">My Profile</p>
+                </Link>
+                <Link to={"/Orders"}>
+                  <p onClick={()=>navigate('Orders')} className="cursor-pointer hover:text-black">Orders</p>
+                </Link>
+                <p onClick={logout} className="cursor-pointer hover:text-black">
+                  Logout
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
 
-        <button onClick={handleOnThemeToggle} className="text-gray-700 dark:text-gray-300">
+        <button
+          onClick={handleOnThemeToggle}
+          className="text-gray-700 dark:text-gray-300"
+        >
           <FontAwesomeIcon icon={theme ? faSun : faMoon} />
         </button>
         <img
@@ -100,7 +126,11 @@ const Navbar = () => {
             onClick={() => setVisible(false)}
             className="cursor-pointer pt-10 flex items-center gap-4 p-4"
           >
-            <img src={assets.dropdown_icon} alt="Back" className="h-4 rotate-180" />
+            <img
+              src={assets.dropdown_icon}
+              alt="Back"
+              className="h-4 rotate-180"
+            />
             <p>Back</p>
           </div>
           <NavLink

@@ -12,8 +12,8 @@ productRouter.post('/add', adminAuth, upload.fields([
     { name: 'image3', maxCount: 1 },
     { name: 'image4', maxCount: 1 },
 ]), addProduct);
-32
-// Route for removing products
+
+// Route for removing products by name
 productRouter.post('/remove', adminAuth, removeProduct);
 
 // Route for listing products

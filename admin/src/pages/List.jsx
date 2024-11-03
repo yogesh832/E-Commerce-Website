@@ -12,7 +12,7 @@ const List = ({ token }) => {
   const fetchList = async () => {
     try {
       const response = await axios.get(backendUrl + "/api/product/list");
-      console.log(response.data); // Log the full response
+      console.log("Fetched Products:", response.data); // Log the full response
       if (response.data.success && Array.isArray(response.data.products)) {
         setProducts(response.data.products); // Set products array from response
       } else {
@@ -27,53 +27,35 @@ const List = ({ token }) => {
     }
   };
 
-  // Remove a product
-  const removeProduct = async (id) => {
-    if (!token) {
-      toast.error("Authentication required to remove products.");
-      return;
-    }
-  
+  // Remove a product by name
+  const removeProduct = async (productName) => {
     try {
-      // Log token details for debugging
-      const tokenParts = token.split('.');
-      if (tokenParts.length !== 3) {
-        throw new Error("Invalid token format");
-      }
-      const decodedPayload = JSON.parse(atob(tokenParts[1]));
-      const currentTime = Math.floor(Date.now() / 1000);
-      
-      // Check if token is expired
-      if (decodedPayload.exp < currentTime) {
-        toast.error("Session expired. Please log in again.");
-        return;
-      }
-  
-      const response = await axios.post(
-        backendUrl + "/api/product/remove",
-        { id },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-  
-      if (response.data.success) {
+        // Retrieve the token from local storage or your state management
+        const token = localStorage.getItem('token'); // or however you're storing your token
+
+        const response = await axios.post(`${backendUrl}/api/product/remove`, {
+            name: productName,  // Send the product name
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`, // Include the token in the headers
+            },
+        });
+
+        console.log(response.data);
         toast.success("Product removed successfully.");
         await fetchList(); // Refresh product list after removal
-      } else {
-        toast.error(response.data.message || "Failed to remove product.");
-      }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        toast.error("Unauthorized. Please log in again.");
-      } else {
-        toast.error("Failed to remove product. " + error.message);
-      }
-      console.error("Error removing product:", error);
+        if (error.response) {
+            console.error("Error removing product:", error.response.data.message);
+            toast.error(error.response.data.message);
+        } else {
+            console.error("Error removing product:", error.message);
+            toast.error("Failed to remove product. " + error.message);
+        }
     }
-  };
-  
-  
+};
+
+
 
   // Fetch list on component mount
   useEffect(() => {
@@ -119,7 +101,10 @@ const List = ({ token }) => {
                   {item.price}
                 </p>
                 <button
-                  onClick={() => removeProduct(item._id)}
+                  onClick={() => {
+                    console.log("Product Item:", item); // Log the product before attempting to remove
+                    removeProduct(item.name); // Ensure name is passed instead of _id
+                  }}
                   className="text-center text-red-600 hover:underline"
                 >
                   Remove

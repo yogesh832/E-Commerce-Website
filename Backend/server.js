@@ -7,6 +7,8 @@ import connectDb from './config/mongodb.js';
 import connectCloudinary from './config/cloudinary.js';
 import userRouter from './routes/userRouter.js';
 import productRouter from './routes/productRouter.js';
+import cartRouter from './routes/cartRoute.js';
+
 
 // app config
 const app = express();
@@ -42,16 +44,26 @@ try {
 app.use(express.json());
 
 // CORS configuration
+// CORS configuration
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
+
 app.use(cors({
-    origin: 'http://localhost:5173', // Replace with your frontend URL
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
-    credentials: true // Allow credentials if necessary
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or Postman)
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify the allowed HTTP methods
+    credentials: true // Allow credentials if needed (like cookies)
 }));
 
 // api endpoints
 app.use('/api/user', userRouter);
 app.use('/api/product', productRouter);
-
+app.use('/api/cart', cartRouter);
 // Default route for health check
 app.get('/', (req, res) => {
     res.status(200).send('Hello from Express Server');

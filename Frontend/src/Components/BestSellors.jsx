@@ -8,8 +8,10 @@ const BestSellers = () => {
   const [bestSeller, setBestSeller] = useState([]);
 
   useEffect(() => {
-    const bestProduct = products.filter((item) => item.bestseller);
-    setBestSeller(bestProduct.slice(0, 4));
+    if (products.length) {
+      const bestProduct = products.filter((item) => item.bestseller);
+      setBestSeller(bestProduct.slice(0, 4)); // Limit to 4 bestsellers
+    }
   }, [products]);
 
   return (
@@ -22,16 +24,20 @@ const BestSellers = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
-        {bestSeller.map((item, index) => (
-          <ProductItem
-            key={index}
-            id={item._id}
-            image={item.image}
-            name={item.name}
-            price={item.price}
-            bestseller={item.bestseller}  // Pass the bestseller property here
-          />
-        ))}
+        {bestSeller.length > 0 ? (
+          bestSeller.map((item, index) => (
+            <ProductItem
+              key={item._id} // Better to use item._id if available instead of index
+              id={item._id}
+              image={item.images && item.images.length > 0 ? item.images[0] : "https://via.placeholder.com/150"}
+              name={item.name}
+              price={item.price}
+              bestseller={item.bestseller} // Make sure bestseller exists in the product object
+            />
+          ))
+        ) : (
+          <p>No best sellers available.</p> // Handle no products scenario
+        )}
       </div>
     </div>
   );

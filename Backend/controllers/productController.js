@@ -61,24 +61,13 @@ const addProduct = async (req, res) => {
 // Function to list products with optional pagination
 const listProduct = async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;  // Page number from query string
-        const limit = parseInt(req.query.limit) || 10;  // Number of items per page
-        const skip = (page - 1) * limit;  // Calculate skip value
-
-        const products = await productModel.find({})
-            .skip(skip)
-            .limit(limit);
-
-        const totalProducts = await productModel.countDocuments();  // Total number of products
+        // Retrieve all products without pagination
+        const products = await productModel.find({});
 
         res.json({
             success: true,
             products,
-            pagination: {
-                totalProducts,
-                currentPage: page,
-                totalPages: Math.ceil(totalProducts / limit)
-            }
+            totalProducts: products.length  // Total number of products in the list
         });
     } catch (error) {
         console.error('Error listing products:', error.message);
@@ -86,11 +75,15 @@ const listProduct = async (req, res) => {
     }
 };
 
-// Function to remove products
+
 const removeProduct = async (req, res) => {
     try {
-        const { id } = req.body;
-        await productModel.findByIdAndDelete(id);
+        const { name } = req.body;  // Expecting 'name' in the request body
+        const result = await productModel.deleteOne({ name });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
 
         res.json({ success: true, message: 'Product removed successfully' });
     } catch (error) {
@@ -98,6 +91,7 @@ const removeProduct = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+    
 
 // Function to fetch a single product by ID
 const singleProduct = async (req, res) => {
