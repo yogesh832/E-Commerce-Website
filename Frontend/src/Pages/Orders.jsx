@@ -1,91 +1,114 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../Contaxt/ShopContext";
 import Title from "../Components/Title";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { backendUrl } from "../../../admin/src/App";
 
 const Orders = () => {
-  const { products, currency } = useContext(ShopContext);
+  const { token, currency } = useContext(ShopContext); // Access token from context
+  const [orderData, setOrderData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fallback image URL
+  const fallbackImage = 'https://via.placeholder.com/150'; // Placeholder image URL
+
+  const loadOrderData = async () => {
+    // if (!token) {
+    //   console.log("No token found");
+    //   return null; // Exit if no token
+    // }
+
+    try {
+      setLoading(true);
+      console.log(backendUrl);
+
+      const response = await axios.post(`${backendUrl}/api/order/userOrders`, {}, {
+        headers: { Authorization: `Bearer ${token}` }, // Correctly set the token header
+      });
+
+      if (response.data.success) {
+        setOrderData(response.data.orders || []);
+      } else {
+        toast.error(response.data.message || "Failed to load orders.");
+      }
+    } catch (error) {
+      console.error("Error loading orders:", error);
+      toast.error("An error occurred while fetching your orders.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    console.log("Products Data: ", products); // Check what data you're receiving
-  }, [products]);
+    loadOrderData();
+  }, [token]); // Re-fetch orders if token changes
 
   return (
     <div className="border-t pt-14">
-      <div className="text-2xl ">
+      <div className="text-2xl">
         <Title text1={"MY"} text2={"ORDERS"} />
       </div>
 
-      <div className="">
-        {/* Ensure products exist before mapping */}
-        {products && products.slice(1, 4).map((item, index) => {
-          // Log each product item to check the image field and structure
-          console.log("Product Item: ", item);
-
-          // Safeguard to ensure item exists
-          if (!item) {
-            return (
-              <div key={index} className="py-4 border-b border-t text-gray-700">
-                <p className="text-center text-gray-500">Product data is missing</p>
-              </div>
-            );
-          }
-
-          // Make sure the property is correct (item.images or item.image)
-          const imageUrl = item.image && item.image.length > 0 ? item.image[0] : null;
-
-          // Fallback image URL
-          const fallbackImage = "https://via.placeholder.com/150";
-
-          return (
+      <div>
+        {loading ? (
+          <p className="text-center text-gray-500">Loading your orders...</p>
+        ) : orderData.length === 0 ? (
+          <p className="text-center text-gray-700">No orders found.</p>
+        ) : (
+          orderData.map((order, index) => (
             <div
               key={index}
-              className="py-4 border-b border-t text-gray-700 flex flex-col md:flex-row md:items-center gap-4"
+              className="py-4 border-b text-gray-700 flex flex-col gap-4"
             >
-              <div className="flex items-center gap-6 text-sm">
-                {/* Display the image if available, otherwise show fallback */}
-                {imageUrl ? (
+              {order.items.map((item, itemIndex) => (
+                <div
+                  key={itemIndex}
+                  className="flex items-center gap-6 text-sm"
+                >
+                  {/* Image Section */}
                   <img
-                    src={imageUrl}
-                    alt={item.name || "Unknown Product"}
-                    className="w-16 sm:w-20"
-                    onError={(e) => {
-                      e.target.onerror = null; // Prevents loop in case fallback also fails
-                      e.target.src = fallbackImage; // Replace broken image with fallback
-                    }}
+                    src={item.images && item.images.length > 0 ? item.images[0] : fallbackImage}
+                    alt={item.name || "Product"}
+                    className="w-16 sm:w-20 rounded-md"
                   />
-                ) : (
-                  <div className="w-16 sm:w-20 bg-gray-200 text-center text-gray-500">
-                    No Image Available
+
+                  {/* Product Details Section */}
+                  <div className="flex flex-col flex-1">
+                    <p className="font-medium">{item.name}</p>
+                    <div className="flex gap-4">
+                    <p>
+                      <span className="font-medium">Price: </span>
+                      {currency}{item.price}
+                    </p>
+                    <p>
+                      <span className="font-medium">Quantity: </span>{item.quantity}
+                    </p>
+                    <p>
+                      <span className="font-medium">Size: </span>{item.size || "N/A"}
+                    </p>
+                    </div>
+
+                    <p>
+                      <span className="font-medium mt-2">Date: </span>{new Date(order.date).toLocaleDateString()}
+                    </p>
                   </div>
-                )}
-              </div>
 
-              <div className="">
-                <p className="text-base font-medium">{item.name || "Unknown Product"}</p>
-                <div className="flex items-center gap-3 mt-2 text-base text-gray-700">
-                  <p>
-                    {currency}
-                    {item.price || "N/A"}
-                  </p>
-                  <p>Quantity: 1</p>
-                  <p className="px-2 sm:px-3 sm:py-1 border bg-slate-50">
-                    Size: {item.size || "N/A"}
-                  </p>
+                  {/* Order Status Section */}
+                  <div className="text-center flex gap-36 md:text-right">
+                    <p className="text-sm">
+                      <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                      {order.status}
+                    </p>
+                    <button className=" px-4 py-2 rounded-md text-xs">
+                      Track Order
+                    </button>
+                  </div>
                 </div>
-                <p className="mt-2">
-                  Date: <span className="text-gray-400">25 Jul 2024</span>
-                </p>
-              </div>
-
-              <div className="md:w-1/2 flex justify-between">
-                <div className="flex items-center gap-2">
-                  <p className="min-w-2 h-2 rounded-full bg-green-500"></p>
-                  <p className="text-sm md:text-base">Ready To Ship</p>
-                </div>
-              </div>
+              ))}
             </div>
-          );
-        })}
+          ))
+        )}
       </div>
     </div>
   );

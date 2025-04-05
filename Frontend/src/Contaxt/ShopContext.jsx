@@ -107,7 +107,7 @@ const ShopContextProvider = (props) => {
   const getProductData = async () => {
     try {
       const response = await axios.get(backendUrl + "/api/product/list");
-      console.log(response.data);
+      // console.log(response.data);
       if (response.data.success) {
         setProducts(response.data.products);
       } else {
@@ -162,6 +162,7 @@ const ShopContextProvider = (props) => {
       showSearch,
       setShowSearch,
       cartItems,
+      setCartItems,
       addToCart,
       getCartCount,
       updateQuantity,

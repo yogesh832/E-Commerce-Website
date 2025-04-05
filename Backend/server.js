@@ -8,6 +8,7 @@ import connectCloudinary from './config/cloudinary.js';
 import userRouter from './routes/userRouter.js';
 import productRouter from './routes/productRouter.js';
 import cartRouter from './routes/cartRoute.js';
+import orderRouter from './routes/OrderRoute.js';
 
 
 // app config
@@ -64,6 +65,7 @@ app.use(cors({
 app.use('/api/user', userRouter);
 app.use('/api/product', productRouter);
 app.use('/api/cart', cartRouter);
+app.use('/api/order', orderRouter)
 // Default route for health check
 app.get('/', (req, res) => {
     res.status(200).send('Hello from Express Server');
