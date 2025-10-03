@@ -6,6 +6,7 @@ import { ShopContext } from "../Contaxt/ShopContext";
 import { backendUrl } from "../../../admin/src/App";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 const PlaceOrder = () => {
   const [method, setMethod] = useState("cod");
@@ -21,7 +22,7 @@ const PlaceOrder = () => {
 
   const [formData, setFormData] = useState({
     firstName: "",
-    lastName: "", 
+    lastName: "",
     street: "",
     city: "",
     state: "",
@@ -31,8 +32,8 @@ const PlaceOrder = () => {
   });
 
   const onChangeHandler = (e) => {
-    const name = e.target.name
-    const value = e.target.value
+    const name = e.target.name;
+    const value = e.target.value;
     setFormData((data) => ({ ...data, [name]: value }));
   };
 
@@ -49,28 +50,29 @@ const PlaceOrder = () => {
           if (cartItems[items][item] > 0) {
             const itemInfo = structuredClone(products.find((product) => product._id === items));
             if (itemInfo) {
-                itemInfo.size = item;
-                itemInfo.quantity = cartItems[items][item]
-                orderItems.push(itemInfo)
+              itemInfo.size = item;
+              itemInfo.quantity = cartItems[items][item];
+              orderItems.push(itemInfo);
             }
           }
         }
       }
-  console.log(orderItems);
-      // Prepare address as a single string
+
       const address = `${formData.street}, ${formData.city}, ${formData.state}, ${formData.zipcode}`;
-  
-      // Prepare order data
+
       let orderData = {
-        address: address, // Use the formatted address string
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone,  // Fix: 'phone' instead of 'mobile'
+        address: address,
+        pincode: formData.zipcode,
         items: orderItems,
-        amount: getCartAmount() + delivery_fee, // Total amount
+        amount: getCartAmount() + delivery_fee,
         paymentMethod: method,
       };
-  
+
       console.log("Order data being sent:", orderData);
-  
-      // Switch based on the payment method
+
       switch (method) {
         case "cod":
           const response = await fetch(`${backendUrl}/api/order/place`, {
@@ -81,7 +83,7 @@ const PlaceOrder = () => {
             },
             body: JSON.stringify(orderData),
           });
-  
+
           const responseData = await response.json();
           if (response.ok && responseData.success) {
             console.log("Order placed successfully:", responseData);
@@ -92,22 +94,26 @@ const PlaceOrder = () => {
             alert(`Order creation failed: ${responseData.message}`);
           }
           break;
-  
-        case "stripe":
+
         case "razorpay":
-          // You can handle stripe and razorpay logic here
-          // Ensure you have the logic for these payment methods if needed
+          const responseRazorpay = await axios.post(
+            `${backendUrl}/api/order/razorpay`,
+            orderData,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          console.log("Response from Razorpay:", responseRazorpay.data);
+          // Add Razorpay payment handling logic here
           break;
-  
+
         default:
           break;
       }
     } catch (error) {
-      toast.error("An error occurred while placing the order. Please try again.")
+      toast.error("An error occurred while placing the order. Please try again.");
       console.error("Error placing order:", error);
     }
   };
-  
+
   return (
     <div className="bg-white rounded-md p-4 shadow-md">
       <div className="text-xl sm:text-2xl mb-4">
@@ -178,8 +184,8 @@ const PlaceOrder = () => {
             />
             <input
               type="number"
-              name="mobile"
-              value={formData.mobile}
+              name="phone"  // Fix: 'phone' instead of 'mobile'
+              value={formData.phone}
               onChange={onChangeHandler}
               placeholder="Mobile No."
               className="border border-gray-300 px-3 py-2 rounded-md"

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import  { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../Contaxt/ShopContext";
 import ProductItem from "../Components/ProductItem";
 import { assets } from "../assets/frontend_assets/assets";
@@ -94,7 +94,7 @@ const Collections = () => {
         >
           <p className="mb-3 text-sm font-medium">CATEGORIES</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
-            {["Men", "Women", "Kids"].map((category) => (
+            {["Men", "Women", "Kids","Hardware","Interior"].map((category) => (
               <label key={category} className="flex gap-2">
                 <input
                   type="checkbox"

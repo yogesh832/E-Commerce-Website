@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { assets } from "../assets/assets";
-import axios from "axios"
+import axios from "axios";
 import { backendUrl } from "../App";
 import { toast } from "react-toastify";
 
@@ -29,13 +29,13 @@ const Add = () => {
       formData.append("subcategory", subCategory);
       formData.append("bestseller", bestseller);
       formData.append("sizes", JSON.stringify(sizes));
-  
+
       image1 && formData.append("image1", image1);
       image2 && formData.append("image2", image2);
       image3 && formData.append("image3", image3);
       image4 && formData.append("image4", image4);
-      console.log('check token', localStorage.getItem("token"))
-      let authToken = localStorage.getItem("token")
+      console.log("check token", localStorage.getItem("token"));
+      let authToken = localStorage.getItem("token");
       // Send the request
       const response = await axios.post(
         backendUrl + "/api/product/add",
@@ -43,34 +43,38 @@ const Add = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data", // Optional, Axios handles this
-            "Authorization": `Bearer ${authToken}`
+            Authorization: `Bearer ${authToken}`,
           },
         }
       );
-      if(response.data.success){
-        toast(response.data.message)
-        setName("")
-        setDescription("")
-        setImage1(false)
-        setImage2(false)
-        setImage3(false)
-        setImage4(false)
-        setPrice('')
-      }else{
-        toast.error(response.data.message)
+      if (response.data.success) {
+        toast(response.data.message);
+        setName("");
+        setDescription("");
+        setImage1(false);
+        setImage2(false);
+        setImage3(false);
+        setImage4(false);
+        setPrice("");
+      } else {
+        toast.error(response.data.message);
       }
-      
+
       console.log("Response Data:", response.data);
     } catch (error) {
-      console.log("Error:", error.response ? error.response.data : error.message);
-   toast.error(error.message)
+      console.log(
+        "Error:",
+        error.response ? error.response.data : error.message
+      );
+      toast.error(error.message);
     }
   };
 
-  
-
   return (
-    <form onSubmit={onSubmitHandler} className="flex flex-col w-full items-start gap-3 ">
+    <form
+      onSubmit={onSubmitHandler}
+      className="flex flex-col w-full items-start gap-3 "
+    >
       <div className="">
         <p className="mb-2">Upload Image</p>
 
@@ -167,6 +171,8 @@ const Add = () => {
             <option value="Men"> Men</option>
             <option value="Women">Women</option>
             <option value="Kids">Kids</option>
+            <option value="Hardware">Hardware</option>
+            <option value="Interior">Interior</option>
           </select>
         </div>
 
@@ -297,7 +303,7 @@ const Add = () => {
         <input
           type="checkbox"
           checked={bestseller}
-          onChange={() => setBestseller(prev => !prev)}
+          onChange={() => setBestseller((prev) => !prev)}
           id="bestseller"
         />
         <label className="cursor-pointer" htmlFor="bestseller">

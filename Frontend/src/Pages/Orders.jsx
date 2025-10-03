@@ -100,9 +100,13 @@ const Orders = () => {
                       <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
                       {order.status}
                     </p>
-                    <button className=" px-4 py-2 rounded-md text-xs">
-                      Track Order
-                    </button>
+                    <button 
+  className="px-4 py-2 rounded-md text-xs" 
+  onClick={() => window.location.reload()}
+>
+  Track Order
+</button>
+
                   </div>
                 </div>
               ))}

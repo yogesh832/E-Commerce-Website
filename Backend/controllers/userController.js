@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 // Helper function to create JWT token
 const createToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '8h' });
 };
 
 // User login

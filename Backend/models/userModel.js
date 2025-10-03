@@ -22,5 +22,5 @@ default:{}
 }, {minimize:false});
 // because mongodb can remove the empty fields from the document, we need to set minimize to false to keep the empty fields
 
-const userModel = mongoose.model.user || mongoose.model('user',userSchema );
+const userModel = mongoose.model.user || mongoose.model('User',userSchema );
 export default userModel;
