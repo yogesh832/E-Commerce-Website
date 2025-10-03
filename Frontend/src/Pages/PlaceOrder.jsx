@@ -18,7 +18,7 @@ const PlaceOrder = () => {
     delivery_fee,
     products,
   } = useContext(ShopContext);
-  const backendUrl = "http://localhost:4000"; // Replace with your backend URL
+  const backendUrl = "https://e-commerce-website-o8xx.onrender.com"; // Replace with your backend URL
 
   const [formData, setFormData] = useState({
     firstName: "",

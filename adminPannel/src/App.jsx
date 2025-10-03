@@ -10,7 +10,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // Set the backend URL
-export const backendUrl = "http://localhost:4000"; // Ensure this matches your backend's actual URL
+export const backendUrl = "https://e-commerce-website-o8xx.onrender.com"; // Ensure this matches your backend's actual URL
 export const currency = "₹";
 
 const App = () => {

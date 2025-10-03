@@ -16,7 +16,7 @@ const ShopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
   const navigate = useNavigate();
 
-  const backendUrl = "http://localhost:4000"; // Replace with your backend URL
+  const backendUrl = "https://e-commerce-website-o8xx.onrender.com"; // Replace with your backend URL
   const addToCart = async (itemId, size) => {
     let cartData = structuredClone(cartItems);
 

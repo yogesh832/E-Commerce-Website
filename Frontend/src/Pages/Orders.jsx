@@ -11,7 +11,7 @@ const Orders = () => {
 
   // Fallback image URL
   const fallbackImage = "https://via.placeholder.com/150"; // Placeholder image URL
-  const backendUrl = "http://localhost:4000"; // Replace with your backend URL
+  const backendUrl = "https://e-commerce-website-o8xx.onrender.com"; // Replace with your backend URL
 
   const loadOrderData = async () => {
     // if (!token) {
