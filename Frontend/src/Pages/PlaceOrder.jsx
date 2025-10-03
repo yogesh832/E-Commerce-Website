@@ -3,7 +3,6 @@ import Title from "../Components/Title";
 import CartTotal from "../Components/CartTotal";
 import { assets } from "../assets/frontend_assets/assets";
 import { ShopContext } from "../Contaxt/ShopContext";
-import { backendUrl } from "../../../admin/src/App";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -19,6 +18,7 @@ const PlaceOrder = () => {
     delivery_fee,
     products,
   } = useContext(ShopContext);
+  const backendUrl = "http://localhost:4000"; // Replace with your backend URL
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -48,7 +48,9 @@ const PlaceOrder = () => {
       for (const items in cartItems) {
         for (const item in cartItems[items]) {
           if (cartItems[items][item] > 0) {
-            const itemInfo = structuredClone(products.find((product) => product._id === items));
+            const itemInfo = structuredClone(
+              products.find((product) => product._id === items)
+            );
             if (itemInfo) {
               itemInfo.size = item;
               itemInfo.quantity = cartItems[items][item];
@@ -63,7 +65,7 @@ const PlaceOrder = () => {
       let orderData = {
         firstName: formData.firstName,
         lastName: formData.lastName,
-        phone: formData.phone,  // Fix: 'phone' instead of 'mobile'
+        phone: formData.phone, // Fix: 'phone' instead of 'mobile'
         address: address,
         pincode: formData.zipcode,
         items: orderItems,
@@ -109,7 +111,9 @@ const PlaceOrder = () => {
           break;
       }
     } catch (error) {
-      toast.error("An error occurred while placing the order. Please try again.");
+      toast.error(
+        "An error occurred while placing the order. Please try again."
+      );
       console.error("Error placing order:", error);
     }
   };
@@ -184,7 +188,7 @@ const PlaceOrder = () => {
             />
             <input
               type="number"
-              name="phone"  // Fix: 'phone' instead of 'mobile'
+              name="phone" // Fix: 'phone' instead of 'mobile'
               value={formData.phone}
               onChange={onChangeHandler}
               placeholder="Mobile No."

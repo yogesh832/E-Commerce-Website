@@ -3,7 +3,6 @@ import { ShopContext } from "../Contaxt/ShopContext";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import toastify CSS for styling
-import { backendUrl } from "../../../admin/src/App";
 
 const Login = () => {
   const [currentState, setCurrentState] = useState("Login");
@@ -12,6 +11,7 @@ const Login = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const backendUrl = "http://localhost:4000"; // Replace with your backend URL
 
   const handleSubmit = async (event) => {
     event.preventDefault();

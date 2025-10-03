@@ -3,7 +3,6 @@ import { ShopContext } from "../Contaxt/ShopContext";
 import Title from "../Components/Title";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { backendUrl } from "../../../admin/src/App";
 
 const Orders = () => {
   const { token, currency } = useContext(ShopContext); // Access token from context
@@ -11,7 +10,8 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
 
   // Fallback image URL
-  const fallbackImage = 'https://via.placeholder.com/150'; // Placeholder image URL
+  const fallbackImage = "https://via.placeholder.com/150"; // Placeholder image URL
+  const backendUrl = "http://localhost:4000"; // Replace with your backend URL
 
   const loadOrderData = async () => {
     // if (!token) {
@@ -23,9 +23,13 @@ const Orders = () => {
       setLoading(true);
       console.log(backendUrl);
 
-      const response = await axios.post(`${backendUrl}/api/order/userOrders`, {}, {
-        headers: { Authorization: `Bearer ${token}` }, // Correctly set the token header
-      });
+      const response = await axios.post(
+        `${backendUrl}/api/order/userOrders`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` }, // Correctly set the token header
+        }
+      );
 
       if (response.data.success) {
         setOrderData(response.data.orders || []);
@@ -68,7 +72,11 @@ const Orders = () => {
                 >
                   {/* Image Section */}
                   <img
-                    src={item.images && item.images.length > 0 ? item.images[0] : fallbackImage}
+                    src={
+                      item.images && item.images.length > 0
+                        ? item.images[0]
+                        : fallbackImage
+                    }
                     alt={item.name || "Product"}
                     className="w-16 sm:w-20 rounded-md"
                   />
@@ -77,20 +85,24 @@ const Orders = () => {
                   <div className="flex flex-col flex-1">
                     <p className="font-medium">{item.name}</p>
                     <div className="flex gap-4">
-                    <p>
-                      <span className="font-medium">Price: </span>
-                      {currency}{item.price}
-                    </p>
-                    <p>
-                      <span className="font-medium">Quantity: </span>{item.quantity}
-                    </p>
-                    <p>
-                      <span className="font-medium">Size: </span>{item.size || "N/A"}
-                    </p>
+                      <p>
+                        <span className="font-medium">Price: </span>
+                        {currency}
+                        {item.price}
+                      </p>
+                      <p>
+                        <span className="font-medium">Quantity: </span>
+                        {item.quantity}
+                      </p>
+                      <p>
+                        <span className="font-medium">Size: </span>
+                        {item.size || "N/A"}
+                      </p>
                     </div>
 
                     <p>
-                      <span className="font-medium mt-2">Date: </span>{new Date(order.date).toLocaleDateString()}
+                      <span className="font-medium mt-2">Date: </span>
+                      {new Date(order.date).toLocaleDateString()}
                     </p>
                   </div>
 
@@ -100,13 +112,12 @@ const Orders = () => {
                       <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
                       {order.status}
                     </p>
-                    <button 
-  className="px-4 py-2 rounded-md text-xs" 
-  onClick={() => window.location.reload()}
->
-  Track Order
-</button>
-
+                    <button
+                      className="px-4 py-2 rounded-md text-xs"
+                      onClick={() => window.location.reload()}
+                    >
+                      Track Order
+                    </button>
                   </div>
                 </div>
               ))}
