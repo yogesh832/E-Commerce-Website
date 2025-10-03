@@ -54,6 +54,7 @@ const allowedOrigins = [
   "http://localhost:4173",
   "http://localhost:5174",
   "http://localhost:5175",
+  "https://e-commerce-website-henna-phi.vercel.app",
 ];
 
 app.use(
