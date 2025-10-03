@@ -32,7 +32,11 @@ const LatestCollection = () => {
               key={item._id} // Use item._id as the key for better uniqueness
               id={item._id}
               // Use the first image with fallback in case it's undefined
-              image={item.images && item.images.length > 0 ? item.images[0] : "https://via.placeholder.com/150"}
+              image={
+                item.images && item.images.length > 0
+                  ? item.images[0]
+                  : "https://via.placeholder.com/150"
+              }
               name={item.name}
               price={item.price}
             />

@@ -1,4 +1,4 @@
-import  { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../Contaxt/ShopContext";
 import ProductItem from "../Components/ProductItem";
 import { assets } from "../assets/frontend_assets/assets";
@@ -94,17 +94,19 @@ const Collections = () => {
         >
           <p className="mb-3 text-sm font-medium">CATEGORIES</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
-            {["Men", "Women", "Kids","Hardware","Interior"].map((category) => (
-              <label key={category} className="flex gap-2">
-                <input
-                  type="checkbox"
-                  className="w-3"
-                  value={category}
-                  onChange={toggleCategory}
-                />
-                {category}
-              </label>
-            ))}
+            {["Men", "Women", "Kids", "Hardware", "Interior"].map(
+              (category) => (
+                <label key={category} className="flex gap-2">
+                  <input
+                    type="checkbox"
+                    className="w-3"
+                    value={category}
+                    onChange={toggleCategory}
+                  />
+                  {category}
+                </label>
+              )
+            )}
           </div>
         </div>
 
@@ -152,9 +154,10 @@ const Collections = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
             {filterProduct.map((item) => {
               // Determine the image source
-              const imageSrc = Array.isArray(item.images) && item.images.length > 0
-                ? item.images[0] // Use the first image if available
-                : 'https://via.placeholder.com/150'; // Fallback image
+              const imageSrc =
+                Array.isArray(item.images) && item.images.length > 0
+                  ? item.images[0] // Use the first image if available
+                  : "https://via.placeholder.com/150"; // Fallback image
 
               return (
                 <ProductItem

@@ -26,7 +26,10 @@ const Product = () => {
         console.log("Product Images:", item.images); // Log images array
         setImage(item.images[0] || "https://via.placeholder.com/150"); // Fallback image if none
       } else {
-        console.error("No images found or images is not an array for product:", item);
+        console.error(
+          "No images found or images is not an array for product:",
+          item
+        );
       }
 
       setLoading(false);
@@ -82,14 +85,20 @@ const Product = () => {
             {Array.from({ length: 5 }, (_, index) => (
               <img
                 key={index}
-                src={index < productData.rating ? assets.star_icon : assets.star_dull_icon}
+                src={
+                  index < productData.rating
+                    ? assets.star_icon
+                    : assets.star_dull_icon
+                }
                 alt="Rating star"
                 className="w-3"
               />
             ))}
             <p className="text-gray-800 font-semibold">
               {productData.rating}{" "}
-              <span className="text-gray-600">({productData.reviews} reviews)</span>
+              <span className="text-gray-600">
+                ({productData.reviews} reviews)
+              </span>
             </p>
           </div>
           <p className="text-gray-800 mt-3 font-medium text-3xl">
@@ -140,7 +149,10 @@ const Product = () => {
       </div>
 
       {/* Related products */}
-      <RelatedProducts category={productData.category} subCategory={productData.subCategory} />
+      <RelatedProducts
+        category={productData.category}
+        subCategory={productData.subCategory}
+      />
     </div>
   ) : (
     <div>Product not found</div>
