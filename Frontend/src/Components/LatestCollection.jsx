@@ -10,7 +10,7 @@ const LatestCollection = () => {
   useEffect(() => {
     // Ensure to set the latest products whenever the products array changes
     if (products.length) {
-      setLatestProduct(products.slice(0, 8)); // Get the first 8 products
+      setLatestProduct(products.slice(0, 12)); // Get the first 8 products
     }
   }, [products]);
 
@@ -19,8 +19,9 @@ const LatestCollection = () => {
       <div className="text-center py-8 text-3xl">
         <Title text1={"LATEST"} text2={"COLLECTIONS"} />
         <p className="w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600">
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Impedit
-          voluptatem incidunt dolores autem consectetur harum...
+          Discover our newest range of stylish and comfortable outfits designed
+          to match every mood and moment. From trendy everyday wear to elegant
+          essentials — find your perfect look at Cloths4U.
         </p>
       </div>
 
