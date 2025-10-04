@@ -1,5 +1,4 @@
 import { createContext, useState, useMemo, useEffect } from "react";
-// import { products } from '../assets/frontend_assets/assets'; // Adjust path as needed
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -16,7 +15,8 @@ const ShopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
   const navigate = useNavigate();
 
-  const backendUrl = "https://e-commerce-website-o8xx.onrender.com"; // Replace with your backend URL
+  const backendUrl = "https://e-commerce-website-o8xx.onrender.com";
+
   const addToCart = async (itemId, size) => {
     let cartData = structuredClone(cartItems);
 
@@ -35,7 +35,9 @@ const ShopContextProvider = (props) => {
       cartData[itemId] = {};
       cartData[itemId][size] = 1;
     }
+
     setCartItems(cartData);
+
     if (token) {
       try {
         await axios.post(
@@ -62,7 +64,6 @@ const ShopContextProvider = (props) => {
 
   const updateQuantity = async (itemId, size, quantity) => {
     let cartData = structuredClone(cartItems);
-
     cartData[itemId][size] = quantity;
     setCartItems(cartData);
 
@@ -70,10 +71,10 @@ const ShopContextProvider = (props) => {
       await axios.post(
         `${backendUrl}/api/cart/update`,
         { itemId, size, quantity },
-        { headers: { Authorization: `Bearer ${token}` } } // Corrected headers
+        { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (error) {
-      console.log(error.message); // Log the error for debugging
+      console.log(error.message);
       toast.error(error.message);
     }
   };
@@ -81,27 +82,30 @@ const ShopContextProvider = (props) => {
   const getCartAmount = () => {
     let totalAmount = 0;
 
-    // Iterate through the items in the cart
     for (const itemId in cartItems) {
-      // Iterate through the sizes within each item
       for (const size in cartItems[itemId]) {
-        // Find the corresponding product
-        const product = products.find((product) => product._id === itemId);
-
+        const product = products.find((p) => p._id === itemId);
         if (product) {
-          // Add the total cost for this size and quantity to the total amount
           totalAmount += product.price * cartItems[itemId][size];
         }
       }
     }
-
     return totalAmount;
+  };
+
+  const getTotalQuantity = () => {
+    let total = 0;
+    for (const itemId in cartItems) {
+      for (const size in cartItems[itemId]) {
+        total += cartItems[itemId][size];
+      }
+    }
+    return total;
   };
 
   const getProductData = async () => {
     try {
-      const response = await axios.get(backendUrl + "/api/product/list");
-      // console.log(response.data);
+      const response = await axios.get(`${backendUrl}/api/product/list`);
       if (response.data.success) {
         setProducts(response.data.products);
       } else {
@@ -109,19 +113,20 @@ const ShopContextProvider = (props) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(err);
+      toast.error("Failed to load products");
     }
   };
+
   const getUserCart = async (token) => {
     try {
       const response = await axios.post(
-        backendUrl + "/api/cart/get",
+        `${backendUrl}/api/cart/get`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } } // Corrected headers
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (response.data.success) {
-        setCartItems(response.data.cartData); // Ensure `cartData` matches backend's response format
+        setCartItems(response.data.cartData);
       } else {
         toast.error(response.data.message);
       }
@@ -157,10 +162,10 @@ const ShopContextProvider = (props) => {
       getCartCount,
       updateQuantity,
       getCartAmount,
+      getTotalQuantity,
       navigate,
       setToken,
       token,
-      setCartItems, // Ensure setCartItems is part of the context value
     }),
     [products, currency, delivery_fee, search, showSearch, cartItems, token]
   );

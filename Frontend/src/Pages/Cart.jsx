@@ -2,13 +2,22 @@ import React, { useContext, useState, useEffect } from "react";
 import { ShopContext } from "../Contaxt/ShopContext";
 import Title from "../Components/Title";
 import { assets } from "../assets/frontend_assets/assets";
-import CartTotal from "../Components/CartTotal"; // Import the CartTotal component
+import CartTotal from "../Components/CartTotal";
 
 const Cart = () => {
   const { products, cartItems, currency, updateQuantity } =
     useContext(ShopContext);
   const [cartData, setCartData] = useState([]);
 
+  // ✅ Function to determine discount percentage based on quantity
+  const getDiscountPercentage = (quantity) => {
+    if (quantity >= 20) return 12;
+    if (quantity >= 10) return 10;
+    if (quantity >= 5) return 5;
+    return 0;
+  };
+
+  // ✅ Prepare cart data
   useEffect(() => {
     const tempData = [];
     for (const itemId in cartItems) {
@@ -30,58 +39,83 @@ const Cart = () => {
       <div className="text-2xl mb-3 font-bold">
         <Title text1="Your" text2="Cart" />
       </div>
-      <div className="">
+
+      {/* CART ITEMS */}
+      <div>
         {cartData.map((item, index) => {
           const productData = products.find(
             (product) => product._id === item._id
           );
-
-          // Check if productData exists and has the necessary properties
-          if (!productData) {
-            console.warn(`Product data is missing for item: ${item._id}`);
-            return null; // Skip rendering this item
-          }
+          if (!productData) return null;
 
           const { images, name, price } = productData;
-
-          // Ensure the images array exists and has at least one image
-          if (!images || images.length === 0 || !name || !price) {
-            console.warn(`Incomplete product data for item: ${item._id}`);
-            return null; // Skip rendering if key data is missing
-          }
+          const discountPercent = getDiscountPercentage(item.quantity);
+          const discountedPrice =
+            discountPercent > 0 ? price * (1 - discountPercent / 100) : price;
 
           return (
             <div
               key={index}
-              className="border-t border-b text-gray-700 grid grid-cols-[4fr_5fr_0.5fr] items-center gap-4 py-2"
+              className="border-t border-b text-gray-700 flex flex-col sm:grid sm:grid-cols-[4fr_5fr_0.5fr] items-center gap-4 py-3"
             >
-              <div className="flex items-center gap-4">
-                <img className="w-16 sm:w-20" src={images[0]} alt={`${name}`} />
-                <div className="">
+              {/* PRODUCT IMAGE + DETAILS */}
+              <div className="flex items-center gap-4 w-full sm:w-auto">
+                <img
+                  className="w-16 sm:w-20 rounded-md"
+                  src={images[0]}
+                  alt={name}
+                />
+                <div>
                   <p className="text-sm sm:text-lg font-medium">{name}</p>
-                </div>
-                <div className="flex items-center gap-5 mt-2">
-                  <p>
-                    {currency}
-                    {price}
-                  </p>
-                  <p className="px-2 sm:px-3 sm:py-1 border bg-slate-50">
-                    {item.size}
-                  </p>
+                  <div className="flex items-center gap-5 mt-2">
+                    <p className="text-sm sm:text-base">
+                      {currency}
+                      {discountedPrice.toFixed(2)}{" "}
+                      {discountPercent > 0 && (
+                        <span className="text-green-600 text-xs ml-2 font-semibold">
+                          (-{discountPercent}% off)
+                        </span>
+                      )}
+                    </p>
+                    <p className="px-2 sm:px-3 sm:py-1 border bg-slate-50 text-sm rounded-md">
+                      {item.size}
+                    </p>
+                  </div>
                 </div>
               </div>
-              <input
-                className="border max-w-10 sm:max-20 px-1 sm:px-2 py-1"
-                type="number"
-                min={1}
-                defaultValue={item.quantity}
-                onChange={(e) =>
-                  updateQuantity(item._id, item.size, parseInt(e.target.value))
-                }
-              />
+
+              {/* QUANTITY CONTROL BUTTONS */}
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() =>
+                    updateQuantity(item._id, item.size, item.quantity - 1)
+                  }
+                  className="border rounded-md w-8 h-8 flex items-center justify-center text-lg font-bold hover:bg-gray-100"
+                >
+                  −
+                </button>
+                <span className="w-6 text-center">{item.quantity}</span>
+                <button
+                  onClick={() =>
+                    updateQuantity(item._id, item.size, item.quantity + 1)
+                  }
+                  className="border rounded-md w-8 h-8 flex items-center justify-center text-lg font-bold hover:bg-gray-100"
+                >
+                  +
+                </button>
+              </div>
+
+              {/* DISCOUNT MESSAGE (MOBILE FRIENDLY) */}
+              {discountPercent > 0 && (
+                <p className="text-xs text-green-600 sm:hidden">
+                  {discountPercent}% bulk discount applied!
+                </p>
+              )}
+
+              {/* DELETE ICON */}
               <img
                 onClick={() => updateQuantity(item._id, item.size, 0)}
-                className="w-4 mr-4 sm:w-5 cursor-pointer"
+                className="w-5 cursor-pointer hover:opacity-70"
                 src={assets.bin_icon}
                 alt="Remove item"
               />
@@ -90,7 +124,7 @@ const Cart = () => {
         })}
       </div>
 
-      {/* Add CartTotal Component here */}
+      {/* ✅ CART TOTAL SECTION */}
       <div className="flex justify-end my-20">
         <CartTotal />
       </div>
